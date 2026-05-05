@@ -176,8 +176,10 @@ struct GameContainer<Content: View>: View {
     let emoji: String
     let color: Color
     let insight: String
+    let instructions: String?
     @ViewBuilder let content: Content
     @Environment(\.dismiss) var dismiss
+    @State private var showInstructions = false
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -201,12 +203,39 @@ struct GameContainer<Content: View>: View {
                             .font(NubiFont.subheading).foregroundColor(.nubiDark)
                     }
                     Spacer()
-                    Color.clear.frame(width: 28, height: 28)
+                    if let instructions {
+                        Button { showInstructions = true } label: {
+                            Image(systemName: "questionmark.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(color.opacity(0.8))
+                        }
+                    } else {
+                        Color.clear.frame(width: 28, height: 28)
+                    }
                 }
                 .padding(16)
 
                 content
             }
+        }
+        .sheet(isPresented: $showInstructions) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Image(systemName: emoji)
+                        .font(.system(size: 28))
+                        .foregroundColor(color)
+                    Text("Instrucciones")
+                        .font(NubiFont.subheading)
+                        .foregroundColor(.nubiDark)
+                    Spacer()
+                }
+                if let instructions { Text(instructions).font(NubiFont.body).foregroundColor(.nubiDark) }
+                Spacer()
+                Button { showInstructions = false } label: { Text("Entendido").nubiButton(color: color) }
+            }
+            .padding(20)
+            .background(Color.nubiParchment)
+            .presentationDetents([.medium])
         }
     }
 }
@@ -228,7 +257,7 @@ struct StroopGameView: View {
     @State private var timer: Timer? = nil
 
     var body: some View {
-        GameContainer(title: "Orden en el Almacén", emoji: "shippingbox.fill", color: .nubiGlaucous, insight: "") {
+        GameContainer(title: "Orden en el Almacén", emoji: "shippingbox.fill", color: .nubiGlaucous, insight: "", instructions: "Toca el color del texto. Ignora la palabra escrita.") {
             VStack(spacing: 24) {
                 if !gameStarted {
                     startScreen
@@ -243,21 +272,21 @@ struct StroopGameView: View {
     }
 
     var startScreen: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Image(systemName: "shippingbox.fill")
                 .font(.system(size: 72))
                 .foregroundColor(.nubiGlaucous)
-            Text("Toca el COLOR de la caja, ¡no leas la palabra!")
-                .font(NubiFont.subheading).foregroundColor(.nubiDark).multilineTextAlignment(.center)
-            Text("Ejemplo: si ves la palabra 'AZUL' en color ROJO → toca ROJO")
-                .font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
-            Button { startGame() } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "play.fill")
-                    Text("¡Empezar!")
-                }
-                .nubiButton()
+            Text("Instrucciones")
+                .font(NubiFont.subheading)
+                .foregroundColor(.nubiDark)
+            VStack(spacing: 6) {
+                Text("Toca el color del texto.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+                Text("Ignora la palabra escrita.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
             }
+            Button { startGame() } label: {
+                Text("Empezar").nubiButton()
+            }
+            .padding(.top, 12)
         }
     }
 
@@ -278,8 +307,6 @@ struct StroopGameView: View {
                     .font(.system(size: 44, weight: .black, design: .rounded))
                     .foregroundColor(inkColor)
             }
-
-            Text("¿De qué COLOR es el texto?").font(NubiFont.body).foregroundColor(.nubiDark)
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 ForEach(colorWords, id: \.0) { pair in
@@ -308,9 +335,7 @@ struct StroopGameView: View {
 
     var resultScreen: some View {
         VStack(spacing: 20) {
-            let insight = score >= 10 ? "¡Excelente agilidad cognitiva hoy! Tu mente está muy clara." :
-                          score >= 5  ? "Buen trabajo. Tu mente tuvo algunos cruces de cables, ¡normal!" :
-                                        "Hoy los cables se cruzan un poco. Nubi sugiere un respiro de 1 minuto."
+            let insight = "Actividad completada. Tu desempeño quedó registrado."
             NubiAvatarView(color: score >= 10 ? Color(hex: "#FFD166") : .nubiGlaucous, size: 80)
             Text("¡Tiempo!")
                 .font(NubiFont.heading).foregroundColor(.nubiDark)
@@ -373,19 +398,42 @@ struct BalloonGameView: View {
     @State private var saved = false
     @State private var gameOver = false
     @State private var pressing = false
+    @State private var started = false
 
     let maxRounds = 5
 
     var body: some View {
-        GameContainer(title: "Globos de Energía", emoji: "balloon.fill", color: Color(hex: "#EF476F"), insight: "") {
+        GameContainer(title: "Globos de Energía", emoji: "balloon.fill", color: Color(hex: "#EF476F"), insight: "", instructions: "Mantén presionado para inflar el globo. Suéltalo para guardar puntos. Si explota, no sumas.") {
             VStack(spacing: 20) {
-                if gameOver {
+                if !started {
+                    startScreen
+                } else if gameOver {
                     resultScreen
                 } else {
                     gameScreen
                 }
             }
             .padding(20)
+        }
+    }
+
+    var startScreen: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "balloon.fill")
+                .font(.system(size: 72))
+                .foregroundColor(Color(hex: "#EF476F"))
+            Text("Instrucciones")
+                .font(NubiFont.subheading)
+                .foregroundColor(.nubiDark)
+            VStack(spacing: 6) {
+                Text("Mantén presionado para inflar.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+                Text("Suelta para guardar puntos.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+                Text("Si explota, no sumas.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+            }
+            Button { started = true } label: {
+                Text("Empezar").nubiButton()
+            }
+            .padding(.top, 12)
         }
     }
 
@@ -441,7 +489,6 @@ struct BalloonGameView: View {
 
             if !popped && !saved {
                 VStack(spacing: 12) {
-                    Text("Mantén presionado para inflar").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6))
                     HStack(spacing: 16) {
                         Button {
                             savePoints()
@@ -494,9 +541,7 @@ struct BalloonGameView: View {
     }
 
     var resultScreen: some View {
-        let insight = score >= 300 ? "Tomaste riesgos calculados. Tu gestión del riesgo es excelente." :
-                      score >= 150 ? "Balance saludable entre riesgo y precaución. ¡Bien hecho!" :
-                                     "Tendiste a ser muy precavido o muy impulsivo. Nubi sugiere equilibrio."
+        let insight = "Actividad completada. Puntuación registrada."
         return VStack(spacing: 20) {
             NubiAvatarView(color: score >= 200 ? Color(hex: "#FFD166") : .nubiGlaucous, size: 80)
             Text("¡Resultado final!")
@@ -553,30 +598,39 @@ struct SearchGameView: View {
     @State private var gameStarted = false
 
     var body: some View {
-        GameContainer(title: "Búsqueda de Tesoros", emoji: "magnifyingglass.circle.fill", color: Color(hex: "#06D6A0"), insight: "") {
+        GameContainer(title: "Búsqueda de Tesoros", emoji: "magnifyingglass.circle.fill", color: Color(hex: "#06D6A0"), insight: "", instructions: "Encuentra 3 objetos objetivo antes de que termine el tiempo.") {
             VStack(spacing: 16) {
-                if !gameStarted { startScreen }
-                else if gameOver { resultScreen }
-                else { gameScreen }
+                if !gameStarted {
+                    startScreen
+                } else if gameOver {
+                    resultScreen
+                } else {
+                    gameScreen
+                }
             }
             .padding(20)
         }
     }
 
     var startScreen: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Image(systemName: "magnifyingglass.circle.fill")
                 .font(.system(size: 72))
                 .foregroundColor(Color(hex: "#06D6A0"))
-            Text("Encuentra los 3 objetos objetivo en menos de 15 segundos")
-                .font(NubiFont.subheading).foregroundColor(.nubiDark).multilineTextAlignment(.center)
-            Button { setupRound(); gameStarted = true } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "play.fill")
-                    Text("¡Buscar!")
-                }
-                .nubiButton(color: Color(hex: "#06D6A0"))
+            Text("Instrucciones")
+                .font(NubiFont.subheading)
+                .foregroundColor(.nubiDark)
+            VStack(spacing: 6) {
+                Text("Encuentra 3 objetos objetivo.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+                Text("Toca rápido antes de que acabe el tiempo.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
             }
+            Button {
+                setupRound()
+                gameStarted = true
+            } label: {
+                Text("Empezar").nubiButton(color: Color(hex: "#06D6A0"))
+            }
+            .padding(.top, 12)
         }
     }
 
@@ -592,7 +646,6 @@ struct SearchGameView: View {
 
             // Targets
             VStack(spacing: 8) {
-                Text("Encuentra:").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6))
                 HStack(spacing: 20) {
                     ForEach(targets, id: \.self) { t in
                         ZStack {
@@ -634,9 +687,7 @@ struct SearchGameView: View {
     }
 
     var resultScreen: some View {
-        let insight = score >= 4 ? "¡Atención visual muy aguda! Tu mente está enfocada." :
-                      score >= 2 ? "Buena atención. Algunos objetos se escaparon." :
-                                   "Tu atención visual puede estar fatigada. Un descanso de pantallas te ayudaría."
+        let insight = "Actividad completada. Progreso guardado."
         return VStack(spacing: 20) {
             NubiAvatarView(color: score >= 4 ? Color(hex: "#FFD166") : .nubiGlaucous, size: 80)
             Text("Resultado")
@@ -710,30 +761,36 @@ struct GoNoGoGameView: View {
     enum NubiState { case normal, happy, shocked, burnt }
 
     var body: some View {
-        GameContainer(title: "¡Cuidado con la Cafetera!", emoji: "cup.and.saucer.fill", color: Color(hex: "#F4A261"), insight: "") {
+        GameContainer(title: "¡Cuidado con la Cafetera!", emoji: "cup.and.saucer.fill", color: Color(hex: "#F4A261"), insight: "", instructions: "Toca solo los objetos permitidos. No toques los prohibidos.") {
             VStack(spacing: 20) {
-                if round == 0 && !gameOver { startScreen }
-                else if gameOver { resultScreen }
-                else { gameScreen }
+                if round == 0 && !gameOver {
+                    startScreen
+                } else if gameOver {
+                    resultScreen
+                } else {
+                    gameScreen
+                }
             }
             .padding(20)
         }
     }
 
     var startScreen: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Image(systemName: "cup.and.saucer.fill")
                 .font(.system(size: 72))
                 .foregroundColor(Color(hex: "#F4A261"))
-            Text("Toca si pasa una cafetera o fruta\n¡NO toques si pasa una herramienta o un email!")
-                .font(NubiFont.subheading).foregroundColor(.nubiDark).multilineTextAlignment(.center)
-            Button { nextItem() } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "play.fill")
-                    Text("¡Empezar!")
-                }
-                .nubiButton(color: Color(hex: "#F4A261"))
+            Text("Instrucciones")
+                .font(NubiFont.subheading)
+                .foregroundColor(.nubiDark)
+            VStack(spacing: 6) {
+                Text("Toca los objetos permitidos.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+                Text("No toques los prohibidos.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
             }
+            Button { nextItem() } label: {
+                Text("Empezar").nubiButton(color: Color(hex: "#F4A261"))
+            }
+            .padding(.top, 12)
         }
     }
 
@@ -760,9 +817,7 @@ struct GoNoGoGameView: View {
                 }
             }
 
-            Text(isGo ? "¡TOCA!" : "¡NO toques!")
-                .font(.system(size: 22, weight: .black, design: .rounded))
-                .foregroundColor(isGo ? Color(hex: "#06D6A0") : .red)
+            // Removed directive Text(isGo ? "¡TOCA!" : "¡NO toques!")
 
             // Nubi
             ZStack {
@@ -791,9 +846,7 @@ struct GoNoGoGameView: View {
     }
 
     var resultScreen: some View {
-        let insight = misses <= 2 ? "¡Excelente control de impulsos! Tu atención selectiva es muy buena." :
-                      misses <= 5 ? "Buen intento. Algunos distractores te engañaron." :
-                                    "El estrés elevado activa respuestas impulsivas. Nubi te recomienda un respiro."
+        let insight = "Actividad completada. Resultados guardados."
         return VStack(spacing: 20) {
             NubiAvatarView(color: misses <= 2 ? Color(hex: "#FFD166") : .nubiGlaucous, size: 80)
             Text("¡Fin del turno!")
@@ -854,30 +907,36 @@ struct BalanceGameView: View {
     @State private var showDistractor = false
 
     var body: some View {
-        GameContainer(title: "Equilibrio en la Cuerda", emoji: "figure.stand", color: Color(hex: "#9B59B6"), insight: "") {
+        GameContainer(title: "Equilibrio en la Cuerda", emoji: "figure.stand", color: Color(hex: "#9B59B6"), insight: "", instructions: "Mantén el equilibrio usando los botones. Permanece estable el mayor tiempo posible.") {
             VStack(spacing: 20) {
-                if !gameStarted { startScreen }
-                else if gameOver { resultScreen }
-                else { gameScreen }
+                if !gameStarted {
+                    startScreen
+                } else if gameOver {
+                    resultScreen
+                } else {
+                    gameScreen
+                }
             }
             .padding(20)
         }
     }
 
     var startScreen: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             Image(systemName: "figure.stand")
                 .font(.system(size: 72))
                 .foregroundColor(Color(hex: "#9B59B6"))
-            Text("Mantén a Nubi equilibrado en la cuerda.\nUsa los botones ← → para balancearte.")
-                .font(NubiFont.subheading).foregroundColor(.nubiDark).multilineTextAlignment(.center)
-            Button { startGame() } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "play.fill")
-                    Text("¡Equilibrar!")
-                }
-                .nubiButton(color: Color(hex: "#9B59B6"))
+            Text("Instrucciones")
+                .font(NubiFont.subheading)
+                .foregroundColor(.nubiDark)
+            VStack(spacing: 6) {
+                Text("Mantente estable en la cuerda.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+                Text("Usa los botones ← y → para equilibrarte.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
             }
+            Button { startGame() } label: {
+                Text("Empezar").nubiButton(color: Color(hex: "#9B59B6"))
+            }
+            .padding(.top, 12)
         }
     }
 
@@ -932,8 +991,7 @@ struct BalanceGameView: View {
                 .transition(.scale.combined(with: .opacity))
             }
 
-            Text(abs(balance) < 0.2 ? "¡Perfecto!" : abs(balance) < 0.5 ? "¡Casi!" : "¡Cuidado!")
-                .font(NubiFont.subheading).foregroundColor(.nubiDark)
+            // Removed feedback Text(abs(balance) < 0.2 ? "¡Perfecto!" : abs(balance) < 0.5 ? "¡Casi!" : "¡Cuidado!")
 
             HStack(spacing: 40) {
                 Button { adjustBalance(-0.15) } label: {
@@ -949,9 +1007,7 @@ struct BalanceGameView: View {
     }
 
     var resultScreen: some View {
-        let insight = score >= 15 ? "¡Excelente estabilidad! Tu sistema nervioso está muy equilibrado." :
-                      score >= 8  ? "Buen equilibrio con algunas oscilaciones. Normal en días de trabajo." :
-                                    "Tu equilibrio muestra signos de fatiga en el sistema nervioso. Nubi sugiere un descanso activo."
+        let insight = "Actividad completada. Tiempo en equilibrio registrado."
         return VStack(spacing: 20) {
             NubiAvatarView(color: score >= 15 ? Color(hex: "#9B59B6") : .nubiGlaucous, size: 80)
             Text("¡Ejercicio completado!")
@@ -1008,17 +1064,44 @@ struct MemoryGameView: View {
     @State private var gameOver = false
     @State private var level = 1
     @State private var nubiFlying = false
+    @State private var started = false
 
     enum Phase { case showing, input, correct, wrong }
 
     var body: some View {
-        GameContainer(title: "El Elevador Descompuesto", emoji: "elevator", color: Color(hex: "#2196F3"), insight: "") {
+        GameContainer(title: "El Elevador Descompuesto", emoji: "elevator", color: Color(hex: "#2196F3"), insight: "", instructions: "Memoriza la secuencia de pisos y repítela en el mismo orden.") {
             VStack(spacing: 20) {
-                if gameOver { resultScreen }
-                else { gameScreen }
+                if gameOver {
+                    resultScreen
+                } else if !started {
+                    startScreen
+                } else {
+                    gameScreen
+                }
             }
             .padding(20)
-            .onAppear { newRound() }
+        }
+    }
+
+    var startScreen: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "arrow.up.arrow.down.circle.fill")
+                .font(.system(size: 72))
+                .foregroundColor(Color(hex: "#2196F3"))
+            Text("Instrucciones")
+                .font(NubiFont.subheading)
+                .foregroundColor(.nubiDark)
+            VStack(spacing: 6) {
+                Text("Memoriza la secuencia de pisos.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+                Text("Repítela en el mismo orden.").font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.6)).multilineTextAlignment(.center)
+            }
+            Button {
+                started = true
+                newRound()
+            } label: {
+                Text("Empezar").nubiButton(color: Color(hex: "#2196F3"))
+            }
+            .padding(.top, 12)
         }
     }
 
@@ -1059,9 +1142,7 @@ struct MemoryGameView: View {
             }
             .animation(.spring(), value: nubiFlying)
 
-            // Floor buttons
-            Text("Pisos iluminados: \(sequence.map(String.init).joined(separator: " → "))")
-                .font(NubiFont.caption).foregroundColor(.nubiDark.opacity(0.5))
+            // Removed Text("Pisos iluminados: ...")
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 12) {
                 ForEach(1...8, id: \.self) { floor in
@@ -1091,9 +1172,7 @@ struct MemoryGameView: View {
     }
 
     var resultScreen: some View {
-        let insight = score >= 5 ? "¡Memoria de trabajo excelente! Tu carga cognitiva es baja." :
-                      score >= 3 ? "Buena memoria. Algunos pisos se escaparon." :
-                                   "Tu memoria de corto plazo puede estar saturada. Anotar pendientes puede ayudar."
+        let insight = "Actividad completada. Nivel alcanzado guardado."
         return VStack(spacing: 20) {
             NubiAvatarView(color: score >= 5 ? Color(hex: "#2196F3") : .nubiGlaucous, size: 80)
             Text("¡Fin del viaje!")
@@ -1152,3 +1231,4 @@ struct MemoryGameView: View {
         }
     }
 }
+
