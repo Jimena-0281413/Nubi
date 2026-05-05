@@ -8,10 +8,14 @@
 import SwiftUI
 
 @main
-struct NubiApp: App {
+struct NubiAppApp: App {
+    @StateObject private var viewModel = AppViewModel()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(viewModel)
+                .preferredColorScheme(.light) // La app está diseñada para modo claro
         }
     }
 }
