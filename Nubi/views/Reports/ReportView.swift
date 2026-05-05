@@ -101,8 +101,11 @@ struct ReportView: View {
                         }
                         .nubiButton()
                     } else {
-                        Text("✨ Generar mi reporte semanal")
-                            .nubiButton()
+                        HStack(spacing: 8) {
+                            Image(systemName: "sparkles")
+                            Text("Generar mi reporte semanal")
+                        }
+                        .nubiButton()
                     }
                 }
                 .disabled(vm.isGeneratingReport)
@@ -125,8 +128,11 @@ struct ReportView: View {
                 // Emotion week badges
                 HStack(spacing: 4) {
                     ForEach(vm.emotionHistory.suffix(5)) { e in
-                        Text(PrimaryEmotion.allCases.first { $0.rawValue == e.primaryEmotion }?.emoji ?? "🫧")
-                            .font(.system(size: 16))
+                        let sym   = PrimaryEmotion.allCases.first { $0.rawValue == e.primaryEmotion }?.sfSymbol ?? "circle.fill"
+                        let color = PrimaryEmotion.allCases.first { $0.rawValue == e.primaryEmotion }?.color ?? .nubiGlaucous
+                        Image(systemName: sym)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(color)
                     }
                 }
             }
@@ -253,7 +259,7 @@ struct ReportView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
                         // Welcome message
-                        chatBubble(text: "Hola 👋 ¿Hay algo que no puse en tu reporte? Cuéntame y lo ajusto para que sea más preciso.", isNubi: true)
+                        chatBubble(text: "Hola. ¿Hay algo que no puse en tu reporte? Cuéntame y lo ajusto para que sea más preciso.", isNubi: true)
 
                         ForEach(chatHistory, id: \.text) { msg in
                             chatBubble(text: msg.text, isNubi: msg.role == "nubi")

@@ -102,8 +102,9 @@ struct EmotionLogView: View {
                             Circle()
                                 .fill(emotion.color.opacity(0.18))
                                 .frame(width: 64, height: 64)
-                            Text(emotion.emoji)
-                                .font(.system(size: 34))
+                            Image(systemName: emotion.sfSymbol)
+                                .font(.system(size: 28, weight: .semibold))
+                                .foregroundColor(emotion.color)
                         }
                         Text(emotion.rawValue)
                             .font(NubiFont.subheading)
@@ -142,8 +143,9 @@ struct EmotionLogView: View {
 
             // Big emotion badge
             HStack {
-                Text(selectedPrimary!.emoji)
-                    .font(.system(size: 32))
+                Image(systemName: selectedPrimary!.sfSymbol)
+                    .font(.system(size: 26, weight: .semibold))
+                    .foregroundColor(selectedPrimary!.color)
                 Text(selectedPrimary!.rawValue)
                     .font(NubiFont.heading)
                     .foregroundColor(selectedPrimary!.color)
@@ -164,8 +166,10 @@ struct EmotionLogView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { animateNubi = false }
                     } label: {
                         HStack(spacing: 14) {
-                            Text(sub.emoji)
-                                .font(.system(size: 28))
+                            Image(systemName: sub.sfSymbol)
+                                .font(.system(size: 22, weight: .semibold))
+                                .foregroundColor(selectedPrimary!.color)
+                                .frame(width: 32)
                             Text(sub.label)
                                 .font(NubiFont.subheading)
                                 .foregroundColor(.nubiDark)
@@ -198,19 +202,31 @@ struct EmotionLogView: View {
             }
 
             VStack(spacing: 8) {
-                Text("Registrado ✨")
-                    .font(NubiFont.heading)
-                    .foregroundColor(.nubiDark)
-                Text("\(selectedPrimary!.emoji) \(selectedPrimary!.rawValue) · \(selectedSub!.emoji) \(selectedSub!.label)")
-                    .font(NubiFont.body)
-                    .foregroundColor(.nubiDark.opacity(0.7))
-                    .multilineTextAlignment(.center)
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(.nubiGlaucous)
+                    Text("Registrado")
+                }
+                .font(NubiFont.heading)
+                .foregroundColor(.nubiDark)
+                HStack(spacing: 6) {
+                    Image(systemName: selectedPrimary!.sfSymbol)
+                        .foregroundColor(selectedPrimary!.color)
+                    Text(selectedPrimary!.rawValue)
+                    Text("·")
+                    Image(systemName: selectedSub!.sfSymbol)
+                        .foregroundColor(selectedPrimary!.color)
+                    Text(selectedSub!.label)
+                }
+                .font(NubiFont.body)
+                .foregroundColor(.nubiDark.opacity(0.7))
+                .multilineTextAlignment(.center)
             }
             .padding(20)
             .nubiCard()
             .padding(.horizontal, 32)
 
-            Text("Nubi tomó nota de cómo te sientes hoy.\nEsta info enriquecerá tu reporte semanal. 💙")
+            Text("Nubi tomó nota de cómo te sientes hoy.\nEsta info enriquecerá tu reporte semanal.")
                 .font(NubiFont.caption)
                 .foregroundColor(.nubiDark.opacity(0.55))
                 .multilineTextAlignment(.center)
@@ -222,8 +238,11 @@ struct EmotionLogView: View {
                 }
                 dismiss()
             } label: {
-                Text("¡Listo, gracias Nubi! 🌤️")
-                    .nubiButton(color: selectedPrimary?.color ?? .nubiGlaucous)
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                    Text("¡Listo, gracias Nubi!")
+                }
+                .nubiButton(color: selectedPrimary?.color ?? .nubiGlaucous)
             }
 
             // Botón cambiar
