@@ -36,7 +36,7 @@ struct HomeView: View {
                                 Text(greeting)
                                     .font(NubiFont.caption)
                                     .foregroundColor(.nubiDark.opacity(0.6))
-                                Text("¿Cómo te sientes hoy? ")
+                                Text(vm.userName.isEmpty ? "¿Cómo te sientes hoy?" : "Hola \(vm.userName), ¿cómo te sientes hoy?")
                                     .font(NubiFont.heading)
                                     .foregroundColor(.nubiDark)
                             }
@@ -168,25 +168,43 @@ struct HomeView: View {
                 .font(NubiFont.subheading)
                 .foregroundColor(.nubiDark)
 
-            HStack(spacing: 8) {
-                ForEach(vm.emotionHistory.suffix(7)) { entry in
-                    let sym   = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.sfSymbol ?? "circle.fill"
-                    let color = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.color ?? .nubiGlaucous
-                    VStack(spacing: 4) {
-                        Circle()
-                            .fill(Color(hex: entry.nubiColor))
-                            .frame(width: 28, height: 28)
-                            .overlay(
-                                Image(systemName: sym)
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(.white)
-                            )
-                        Text(dayLetter(from: entry.date))
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
-                            .foregroundColor(.nubiDark.opacity(0.5))
+            HStack(spacing: 6) {
+                ForEach(currentWeekDays, id: \.self) { day in
+                    let isToday = Calendar.current.isDateInToday(day)
+                    let dayEmotions = vm.emotionHistory.filter { Calendar.current.isDate($0.date, inSameDayAs: day) }
+                    
+                    VStack(spacing: 6) {
+                        if dayEmotions.isEmpty {
+                            Circle()
+                                .fill(Color.gray.opacity(0.15))
+                                .frame(width: 28, height: 28)
+                        } else {
+                            HStack(spacing: -14) {
+                                ForEach(dayEmotions) { entry in
+                                    let sym = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.sfSymbol ?? "circle.fill"
+                                    let color = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.color ?? .nubiGlaucous
+                                    
+                                    Circle()
+                                        .fill(color)
+                                        .frame(width: 28, height: 28)
+                                        .overlay(
+                                            Image(systemName: sym)
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundColor(.white)
+                                        )
+                                        .zIndex(entry.date.timeIntervalSince1970)
+                                }
+                            }
+                        }
+                        Text(dayLetter(from: day))
+                            .font(.system(size: 11, weight: isToday ? .bold : .medium, design: .rounded))
+                            .foregroundColor(isToday ? .nubiDark : .nubiDark.opacity(0.5))
                     }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(isToday ? Color.gray.opacity(0.1) : Color.clear)
+                    .cornerRadius(12)
                 }
-                Spacer()
             }
         }
         .padding(18)
@@ -242,6 +260,14 @@ struct HomeView: View {
         formatter.locale = Locale(identifier: "es_MX")
         formatter.dateFormat = "E"
         return String(formatter.string(from: date).prefix(1)).uppercased()
+    }
+
+    private var currentWeekDays: [Date] {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2 // Lunes
+        let today = calendar.startOfDay(for: Date())
+        guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: today) else { return [] }
+        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekInterval.start) }
     }
 }
 
