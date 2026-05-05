@@ -9,8 +9,13 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var vm: AppViewModel
+    
+    // 1. AQUI AGREGAMOS EL "CABLE" PARA CONECTAR LOS TABS
+    @Binding var selectedTab: Int
+    
     @State private var showEmotionLog = false
     @State private var showSOS = false
+    @State private var showBreathing = false // 2. Variable para la alerta de respiración
     @State private var pulseEffect = false
     @State private var greeting = "Buenos días"
 
@@ -102,7 +107,7 @@ struct HomeView: View {
                             }
                         }
 
-                        // MARK: Register Emotion Button (or update)
+                        // MARK: Register Emotion Button
                         Button {
                             showEmotionLog = true
                         } label: {
@@ -133,6 +138,7 @@ struct HomeView: View {
             EmotionLogView()
                 .environmentObject(vm)
         }
+        // Alerta de SOS
         .alert("Llamada de Emergencia", isPresented: $showSOS) {
             Button("Llamar a Psicólogo", role: .none) {
                 if let url = URL(string: "tel://8001234567") {
@@ -141,7 +147,13 @@ struct HomeView: View {
             }
             Button("Cancelar", role: .cancel) {}
         } message: {
-            Text("¿Estás pasando por un momento muy difícil? Un psicólogo de Coppel está disponible ahora mismo para acompañarte. Estás en manos seguras. ")
+            Text("¿Estás pasando por un momento muy difícil? Un psicólogo de Coppel está disponible ahora mismo para acompañarte. Estás en manos seguras.")
+        }
+        // Alerta de Técnica de Respiración
+        .alert("Técnica 4-4-4", isPresented: $showBreathing) {
+            Button("Entendido", role: .cancel) {}
+        } message: {
+            Text("Inhala profundamente por 4 segundos, sostén el aire por 4 segundos y exhala lentamente por 4 segundos. Repite hasta sentir calma.")
         }
         .onAppear { updateGreeting() }
     }
@@ -189,7 +201,12 @@ struct HomeView: View {
 
     private func quickCard(icon: String, label: String, color: Color, tab: Int?) -> some View {
         Button {
-            // navigation handled by tab bar
+            // 3. AQUI ESTA LA MAGIA QUE CAMBIA DE PANTALLA
+            if let tabNumber = tab {
+                selectedTab = tabNumber // Cambia a Reporte, Guías o Juegos
+            } else {
+                showBreathing = true // Muestra la alerta de respiración
+            }
         } label: {
             VStack(alignment: .leading, spacing: 10) {
                 Image(systemName: icon)
@@ -223,5 +240,13 @@ struct HomeView: View {
 
     private func primaryEmotionEmoji(_ name: String) -> String {
         PrimaryEmotion.allCases.first { $0.rawValue == name }?.emoji ?? "🫧"
+    }
+}
+
+// 4. ESTO EVITA QUE XCODE MARQUE ERROR EN LA VISTA PREVIA
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        HomeView(selectedTab: .constant(0))
+            .environmentObject(AppViewModel())
     }
 }
