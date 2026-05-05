@@ -13,6 +13,7 @@ struct GuidesView: View {
     @State private var searchText                       = ""
     @State private var selectedCategory: GuideCategory? = nil
     @State private var showNubiChat                     = false
+    @State private var showAppointment                  = false
 
     var body: some View {
         NavigationView {
@@ -58,6 +59,9 @@ struct GuidesView: View {
         }
         .fullScreenCover(isPresented: $showNubiChat) {
             GuidesChatbotView().environmentObject(vm)
+        }
+        .fullScreenCover(isPresented: $showAppointment) {
+            AppointmentView().environmentObject(vm)
         }
     }
 
@@ -390,7 +394,7 @@ struct GuidesView: View {
                 }
                 Spacer()
             }
-            Button {} label: {
+            Button { showAppointment = true } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "calendar.badge.plus")
                     Text("Agendar cita gratuita")
