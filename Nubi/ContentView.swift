@@ -24,7 +24,9 @@ struct ContentView: View {
         ZStack(alignment: .bottom) {
             // Content
             TabView(selection: $selectedTab) {
-                HomeView()
+                
+                // 1. AQUÍ ESTÁ EL CAMBIO: Conectamos el HomeView con el Tab seleccionado
+                HomeView(selectedTab: $selectedTab)
                     .environmentObject(vm)
                     .tag(0)
 
