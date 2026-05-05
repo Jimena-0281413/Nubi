@@ -12,6 +12,7 @@ struct GuidesView: View {
     @State private var selectedGuide: Guide? = nil
     @State private var searchText = ""
     @State private var selectedCategory = "Todos"
+    @State private var showAppointment = false
 
     let categories = ["Todos", "Trabajo", "Salud Mental", "Herramientas", "Soft Skills", "Enciclopedia"]
 
@@ -94,6 +95,10 @@ struct GuidesView: View {
         }
         .sheet(item: $selectedGuide) { guide in
             GuideDetailView(guide: guide)
+        }
+        .fullScreenCover(isPresented: $showAppointment) {
+            AppointmentView()
+                .environmentObject(vm)
         }
     }
 
@@ -201,7 +206,7 @@ struct GuidesView: View {
                 Spacer()
             }
             Button {
-                // Acción: abrir agendamiento
+                showAppointment = true
             } label: {
                 HStack {
                     Image(systemName: "calendar.badge.plus")
