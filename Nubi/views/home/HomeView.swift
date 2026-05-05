@@ -84,8 +84,11 @@ struct HomeView: View {
                                 NubiAvatarView(color: vm.nubiColor, size: 120)
 
                                 if let entry = vm.todayEmotion {
+                                    let symbol = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.sfSymbol ?? "circle.fill"
+                                    let color  = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.color ?? .nubiGlaucous
                                     HStack(spacing: 6) {
-                                        Text(primaryEmotionEmoji(entry.primaryEmotion))
+                                        Image(systemName: symbol)
+                                            .foregroundColor(color)
                                         Text(entry.primaryEmotion)
                                             .font(NubiFont.subheading)
                                             .foregroundColor(.nubiDark)
@@ -167,13 +170,16 @@ struct HomeView: View {
 
             HStack(spacing: 8) {
                 ForEach(vm.emotionHistory.suffix(7)) { entry in
+                    let sym   = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.sfSymbol ?? "circle.fill"
+                    let color = PrimaryEmotion.allCases.first { $0.rawValue == entry.primaryEmotion }?.color ?? .nubiGlaucous
                     VStack(spacing: 4) {
                         Circle()
                             .fill(Color(hex: entry.nubiColor))
                             .frame(width: 28, height: 28)
                             .overlay(
-                                Text(primaryEmotionEmoji(entry.primaryEmotion))
-                                    .font(.system(size: 14))
+                                Image(systemName: sym)
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(.white)
                             )
                         Text(dayLetter(from: entry.date))
                             .font(.system(size: 10, weight: .medium, design: .rounded))
@@ -226,9 +232,9 @@ struct HomeView: View {
     // MARK: - Helpers
     private func updateGreeting() {
         let hour = Calendar.current.component(.hour, from: Date())
-        if hour < 12 { greeting = "Buenos días " }
-        else if hour < 18 { greeting = "Buenas tardes " }
-        else { greeting = "Buenas noches " }
+        if hour < 12 { greeting = "Buenos días" }
+        else if hour < 18 { greeting = "Buenas tardes" }
+        else { greeting = "Buenas noches" }
     }
 
     private func dayLetter(from date: Date) -> String {
@@ -236,10 +242,6 @@ struct HomeView: View {
         formatter.locale = Locale(identifier: "es_MX")
         formatter.dateFormat = "E"
         return String(formatter.string(from: date).prefix(1)).uppercased()
-    }
-
-    private func primaryEmotionEmoji(_ name: String) -> String {
-        PrimaryEmotion.allCases.first { $0.rawValue == name }?.emoji ?? "🫧"
     }
 }
 
