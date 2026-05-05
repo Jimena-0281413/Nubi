@@ -123,7 +123,7 @@ struct AppointmentView: View {
     // MARK: - Step 1: Reason
     var reasonStepView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            stepHeader(emoji: "💭", title: "¿Qué te gustaría trabajar?",
+            stepHeader(sfSymbol: "bubble.left.and.bubble.right.fill", title: "¿Qué te gustaría trabajar?",
                        subtitle: "Esto nos ayuda a conectarte con el psicólogo ideal")
 
             ForEach(consultationReasons, id: \.label) { reason in
@@ -131,7 +131,9 @@ struct AppointmentView: View {
                     withAnimation(.spring(response: 0.3)) { selectedReason = reason.label }
                 } label: {
                     HStack(spacing: 14) {
-                        Text(reason.emoji).font(.system(size: 28))
+                        Image(systemName: reason.sfSymbol)
+                            .font(.system(size: 28))
+                            .foregroundColor(.nubiGlaucous)
                         Text(reason.label)
                             .font(NubiFont.body)
                             .foregroundColor(.nubiDark)
@@ -181,7 +183,7 @@ struct AppointmentView: View {
     // MARK: - Step 2: Psychologist
     var psychologistStepView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            stepHeader(emoji: "🩺", title: "Elige tu psicólogo",
+            stepHeader(sfSymbol: "stethoscope.circle.fill", title: "Elige tu psicólogo",
                        subtitle: "Todos son profesionales certificados de Coppel")
 
             ForEach(samplePsychologists) { psych in
@@ -194,7 +196,9 @@ struct AppointmentView: View {
                                 Circle()
                                     .fill(Color.nubiGlaucous.opacity(0.12))
                                     .frame(width: 56, height: 56)
-                                Text(psych.emoji).font(.system(size: 30))
+                                Image(systemName: psych.sfSymbol)
+                                    .font(.system(size: 30))
+                                    .foregroundColor(.nubiGlaucous)
                             }
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(psych.name)
@@ -252,7 +256,7 @@ struct AppointmentView: View {
     // MARK: - Step 3: Date & Time
     var dateTimeStepView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            stepHeader(emoji: "📅", title: "Elige fecha y hora",
+            stepHeader(sfSymbol: "calendar.circle.fill", title: "Elige fecha y hora",
                        subtitle: "Horarios disponibles de \(selectedPsychologist?.name ?? "")")
 
             let grouped = Dictionary(grouping: selectedPsychologist?.availableSlots.filter { $0.isAvailable } ?? [],
@@ -302,7 +306,7 @@ struct AppointmentView: View {
     // MARK: - Step 4: Modality
     var modalityStepView: some View {
         VStack(alignment: .leading, spacing: 16) {
-            stepHeader(emoji: "🖥️", title: "¿Cómo prefieres tu cita?",
+            stepHeader(sfSymbol: "display", title: "¿Cómo prefieres tu cita?",
                        subtitle: "Ambas opciones son igual de efectivas")
 
             let modalities: [(icon: String, label: String, desc: String)] = [
@@ -379,7 +383,7 @@ struct AppointmentView: View {
     // MARK: - Step 5: Confirmation
     var confirmationStepView: some View {
         VStack(spacing: 20) {
-            stepHeader(emoji: "✅", title: "Confirma tu cita",
+            stepHeader(sfSymbol: "checkmark.seal.fill", title: "Confirma tu cita",
                        subtitle: "Revisa que todo esté correcto")
 
             VStack(spacing: 0) {
@@ -441,14 +445,15 @@ struct AppointmentView: View {
 
             NubiAvatarView(color: Color(hex: "#5C9999"), size: 110, isAnimating: true)
 
-            Text("🎉")
+            Image(systemName: "checkmark.seal.fill")
                 .font(.system(size: 56))
+                .foregroundColor(Color(hex: "#5C9999"))
 
             VStack(spacing: 8) {
                 Text("¡Cita agendada!")
                     .font(NubiFont.title)
                     .foregroundColor(.nubiDark)
-                Text("Te enviamos un recordatorio.\nEstamos contigo 💙")
+                Text("Te enviamos un recordatorio.\nEstamos contigo")
                     .font(NubiFont.body)
                     .foregroundColor(.nubiDark.opacity(0.7))
                     .multilineTextAlignment(.center)
@@ -560,10 +565,12 @@ struct AppointmentView: View {
         }
     }
 
-    func stepHeader(emoji: String, title: String, subtitle: String) -> some View {
+    func stepHeader(sfSymbol: String, title: String, subtitle: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 8) {
-                Text(emoji).font(.system(size: 28))
+                Image(systemName: sfSymbol)
+                    .font(.system(size: 28))
+                    .foregroundColor(.nubiGlaucous)
                 Text(title)
                     .font(NubiFont.heading)
                     .foregroundColor(.nubiDark)

@@ -585,7 +585,7 @@ struct GuidesChatbotView: View {
                 messages.append((id: UUID(), role: "assistant", text: resp))
             } catch {
                 messages.append((id: UUID(), role: "assistant",
-                                 text: "Lo siento, tuve un problema de conexión 🌐. ¿Lo intentamos de nuevo? 💙"))
+                                 text: "Lo siento, tuve un problema de conexión. ¿Lo intentamos de nuevo?"))
             }
             isLoading = false
         }

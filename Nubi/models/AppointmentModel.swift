@@ -12,7 +12,7 @@ struct Psychologist: Identifiable {
     let id = UUID()
     let name: String
     let specialty: String
-    let emoji: String
+    let sfSymbol: String
     let bio: String
     let yearsExperience: Int
     let rating: Double
@@ -55,15 +55,15 @@ struct Appointment: Identifiable, Codable {
 }
 
 // MARK: - Motivos de consulta
-let consultationReasons: [(emoji: String, label: String)] = [
-    ("😟", "Ansiedad o estrés"),
-    ("😢", "Tristeza o depresión"),
-    ("😤", "Manejo de enojo"),
-    ("😴", "Burnout laboral"),
-    ("🤝", "Conflictos con compañeros"),
-    ("💔", "Problemas personales"),
-    ("🌀", "No sé cómo me siento"),
-    ("💬", "Solo quiero hablar"),
+let consultationReasons: [(sfSymbol: String, label: String)] = [
+    ("brain.head.profile", "Ansiedad o estrés"),
+    ("cloud.rain.fill", "Tristeza o depresión"),
+    ("flame.fill", "Manejo de enojo"),
+    ("battery.0percent", "Burnout laboral"),
+    ("person.2.fill", "Conflictos con compañeros"),
+    ("heart.slash.fill", "Problemas personales"),
+    ("questionmark.circle.fill", "No sé cómo me siento"),
+    ("bubble.left.fill", "Solo quiero hablar"),
 ]
 
 // MARK: - Datos de ejemplo de psicólogos
@@ -97,7 +97,7 @@ let samplePsychologists: [Psychologist] = [
     Psychologist(
         name: "Dra. Ana Lucía Morales",
         specialty: "Ansiedad y estrés laboral",
-        emoji: "👩‍⚕️",
+        sfSymbol: "stethoscope.circle.fill",
         bio: "Especialista en bienestar laboral con enfoque cognitivo-conductual. Ha acompañado a más de 200 colaboradores de Coppel.",
         yearsExperience: 8,
         rating: 4.9,
@@ -106,7 +106,7 @@ let samplePsychologists: [Psychologist] = [
     Psychologist(
         name: "Dr. Carlos Ramírez",
         specialty: "Burnout y manejo emocional",
-        emoji: "👨‍⚕️",
+        sfSymbol: "cross.circle.fill",
         bio: "Psicólogo clínico enfocado en prevención de burnout y desarrollo de resiliencia en entornos de retail.",
         yearsExperience: 6,
         rating: 4.8,
@@ -115,7 +115,7 @@ let samplePsychologists: [Psychologist] = [
     Psychologist(
         name: "Dra. Sofía Hernández",
         specialty: "Inteligencia emocional",
-        emoji: "👩‍⚕️",
+        sfSymbol: "heart.circle.fill",
         bio: "Experta en inteligencia emocional y comunicación asertiva. Certificada en terapia breve centrada en soluciones.",
         yearsExperience: 10,
         rating: 4.95,

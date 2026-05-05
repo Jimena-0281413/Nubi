@@ -541,7 +541,7 @@ struct SearchGameView: View {
     @EnvironmentObject var vm: AppViewModel
     @Environment(\.dismiss) var dismiss
 
-    let allIcons = ["🧴", "🌳", "👔", "☕", "📱", "🎈", "🔑", "💼", "🎯", "🧢", "👟", "🎁", "📦", "🌮", "💡", "🎵"]
+    let allIcons = ["drop.fill", "leaf.fill", "star.fill", "cup.and.saucer.fill", "iphone", "balloon.fill", "key.fill", "briefcase.fill", "target", "graduationcap.fill", "hare.fill", "gift.fill", "shippingbox.fill", "fork.knife", "lightbulb.fill", "music.note"]
     @State private var targets: [String] = []
     @State private var gridIcons: [String] = []
     @State private var found: [String] = []
@@ -600,7 +600,9 @@ struct SearchGameView: View {
                                 .fill(found.contains(t) ? Color(hex: "#06D6A0").opacity(0.3) : Color.white)
                                 .frame(width: 54, height: 54)
                                 .overlay(RoundedRectangle(cornerRadius: 12).stroke(found.contains(t) ? Color(hex: "#06D6A0") : Color.nubiGlaucous.opacity(0.3), lineWidth: 2))
-                            Text(t).font(.system(size: 28))
+                            Image(systemName: t)
+                                .font(.system(size: 22))
+                                .foregroundColor(.nubiDark)
                             if found.contains(t) {
                                 Image(systemName: "checkmark.circle.fill").foregroundColor(Color(hex: "#06D6A0")).font(.system(size: 20)).offset(x: 18, y: -18)
                             }
@@ -618,8 +620,9 @@ struct SearchGameView: View {
                     Button {
                         tapIcon(icon)
                     } label: {
-                        Text(icon)
-                            .font(.system(size: 28))
+                        Image(systemName: icon)
+                            .font(.system(size: 22))
+                            .foregroundColor(.nubiDark)
                             .frame(width: 50, height: 50)
                             .background(found.contains(icon) && targets.contains(icon) ? Color(hex: "#06D6A0").opacity(0.25) : Color.white.opacity(0.7))
                             .cornerRadius(10)
@@ -693,9 +696,9 @@ struct GoNoGoGameView: View {
     @EnvironmentObject var vm: AppViewModel
     @Environment(\.dismiss) var dismiss
 
-    let goItems  = ["☕", "🍎", "🍊", "🫖", "🍇"]
-    let noItems  = ["⚙️", "⏰", "📧", "🔨", "💢"]
-    @State private var currentItem = "☕"
+    let goItems  = ["cup.and.saucer.fill", "applelogo", "leaf.fill", "mug.fill", "carrot.fill"]
+    let noItems  = ["gearshape.fill", "alarm.fill", "envelope.fill", "hammer.fill", "bolt.fill"]
+    @State private var currentItem = "cup.and.saucer.fill"
     @State private var isGo = true
     @State private var score = 0
     @State private var misses = 0
@@ -750,7 +753,10 @@ struct GoNoGoGameView: View {
                     .fill(Color.nubiLightBlue.opacity(0.3))
                     .frame(height: 100)
                 if showItem {
-                    Text(currentItem).font(.system(size: 56)).transition(.move(edge: .leading))
+                    Image(systemName: currentItem)
+                        .font(.system(size: 56))
+                        .foregroundColor(isGo ? Color(hex: "#06D6A0") : .red)
+                        .transition(.move(edge: .leading))
                 }
             }
 

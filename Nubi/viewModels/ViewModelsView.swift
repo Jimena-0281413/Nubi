@@ -181,22 +181,22 @@ class AppViewModel: ObservableObject {
         GENERA EL REPORTE CON ESTA ESTRUCTURA EXACTA:
         ═══════════════════════════════════
 
-        🌤️ **Cómo estuvo tu semana**
+        **Cómo estuvo tu semana**
         [2-3 oraciones empáticas. Usa el nombre del usuario. Conecta las emociones con su puesto \
         y sus estresores específicos (\(workStressors.map{$0.rawValue}.joined(separator: ", "))). \
         Si es mujer con ciclo activo, considera el impacto hormonal si aplica.]
 
-        💡 **Lo que detecté en ti**
+        **Lo que detecté en ti**
         • [Patrón emocional más relevante de los registros]
         • [Algo relacionado con sus estresores laborales o rol familiar (\(familyRole.rawValue))]
         • [Un punto positivo o fortaleza que se vislumbra]
 
-        🌱 **Tu plan para este fin de semana**
+        **Tu plan para este fin de semana**
         1. [Micro-tarea específica, máximo 12 palabras, adaptada a su perfil]
         2. [Micro-tarea específica, máximo 12 palabras]
         3. [Micro-tarea específica, máximo 12 palabras]
 
-        Reglas: Máximo 220 palabras. Sin texto antes del primer emoji. Sin texto después de la tarea 3.
+        Reglas: Máximo 220 palabras. Sin texto antes del primer encabezado. Sin texto después de la tarea 3.
         """
 
         do {
@@ -348,16 +348,16 @@ class AppViewModel: ObservableObject {
     // MARK: - Fallbacks
     private var fallbackReport: String {
         """
-        🌤️ **Cómo estuvo tu semana**
+        **Cómo estuvo tu semana**
         Nubi estuvo contigo en cada momento, aunque hoy tiene problemas de conexión. \
         Tus registros están guardados de forma segura y te esperan para la próxima vez.
 
-        💡 **Lo que detecté en ti**
+        **Lo que detecté en ti**
         • Tu constancia al registrar emociones es autoconocimiento valioso.
         • Esta semana hiciste algo importante: te detuviste a observar cómo te sientes.
         • Eso ya es un gran paso hacia el bienestar.
 
-        🌱 **Tu plan para este fin de semana**
+        **Tu plan para este fin de semana**
         1. Camina 10 minutos sin celular, solo escucha el ambiente
         2. Escribe una cosa buena que ocurrió esta semana
         3. Duerme a la misma hora dos noches seguidas

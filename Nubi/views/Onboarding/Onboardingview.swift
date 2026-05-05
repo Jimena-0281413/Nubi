@@ -92,9 +92,14 @@ struct OnboardingView: View {
     // ════════════════════════════════════════════════
     var welcomeStep: some View {
         VStack(spacing: 22) {
-            Text("Hola 👋")
-                .font(NubiFont.title)
-                .foregroundColor(.nubiDark)
+            HStack(spacing: 6) {
+                Text("Hola")
+                    .font(NubiFont.title)
+                    .foregroundColor(.nubiDark)
+                Image(systemName: "hand.wave.fill")
+                    .font(NubiFont.title)
+                    .foregroundColor(.nubiGlaucous)
+            }
 
             Text("Este es tu espacio seguro.\nAquí puedes ser honesto/a\nsobre cómo te sientes,\nsin miedo y sin juicios.")
                 .font(NubiFont.body)
@@ -324,7 +329,7 @@ struct OnboardingView: View {
             }
             .padding(.horizontal, 22)
 
-            nextButton(label: "Este es mi puesto ✓")
+            nextButton(label: "Este es mi puesto")
         }
         .padding(.top, 16)
     }
