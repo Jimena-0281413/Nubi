@@ -18,10 +18,9 @@ struct LogoNUBIOFCView: View {
             .resizable()
             .scaledToFit()
             .frame(
-                maxWidth: maxWidth ?? (height == nil ? 200 : nil),
+                width: maxWidth,
                 height: height
-            )
-    }
+            )    }
 }
 
 #if DEBUG
