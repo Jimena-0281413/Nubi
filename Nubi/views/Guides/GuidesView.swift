@@ -59,11 +59,9 @@ struct GuidesView: View {
         .sheet(item: $selectedGuide) { guide in
             GuideDetailView(guide: guide)
         }
-        .fullScreenCover(isPresented: $showNubiChat) {
-            GuidesChatbotView().environmentObject(vm)
-        }
         .fullScreenCover(isPresented: $showAppointment) {
-            AppointmentView().environmentObject(vm)
+            AppointmentView()
+                .environmentObject(vm)
         }
     }
 
