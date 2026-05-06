@@ -311,6 +311,7 @@ struct AppointmentView: View {
 
             let modalities: [(icon: String, label: String, desc: String)] = [
                 ("video.fill", "Videollamada", "Conéctate desde donde estés, solo necesitas tu celular"),
+                ("phone.fill", "Llamada", "Habla por teléfono con tu psicólogo desde cualquier lugar"),
                 ("building.2.fill", "Presencial", "Visita el consultorio en tu sucursal Coppel más cercana")
             ]
 
@@ -486,17 +487,35 @@ struct AppointmentView: View {
             .cornerRadius(20)
             .shadow(color: .nubiGlaucous.opacity(0.1), radius: 8)
 
-            Button {
-                dismiss()
-            } label: {
-                HStack {
-                    Image(systemName: "house.fill")
-                    Text("Volver al inicio")
+            VStack(spacing: 12) {
+                Button {
+                    // Aquí iría la lógica nativa de EventKit para guardar en calendario
+                } label: {
+                    HStack {
+                        Image(systemName: "calendar.badge.plus")
+                        Text("Agregar a calendario")
+                    }
+                    .nubiButton(color: Color(hex: "#5C9999"))
+                    .frame(maxWidth: .infinity)
                 }
-                .nubiButton(color: Color(hex: "#5C9999"))
-                .frame(maxWidth: .infinity)
+                .buttonStyle(BounceButtonStyle())
+
+                Button {
+                    dismiss()
+                } label: {
+                    HStack {
+                        Image(systemName: "house.fill")
+                        Text("Volver al inicio")
+                    }
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .foregroundColor(Color(hex: "#5C9999"))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color(hex: "#5C9999").opacity(0.1))
+                    .cornerRadius(18)
+                }
+                .buttonStyle(BounceButtonStyle())
             }
-            .buttonStyle(BounceButtonStyle())
             .padding(.top, 8)
 
             Spacer().frame(height: 40)
