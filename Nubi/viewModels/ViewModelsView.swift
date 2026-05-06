@@ -91,7 +91,7 @@ class AppViewModel: ObservableObject {
 
     // MARK: - Groq API
     // ⚠️ Reemplaza con tu key real de https://console.groq.com
-    private let groqAPIKey = "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"
+    private let groqAPIKey = ""
     private let groqModel  = "llama-3.1-8b-instant"
 
     // MARK: - Persistence
