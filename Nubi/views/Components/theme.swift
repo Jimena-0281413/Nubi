@@ -2,19 +2,26 @@
 //  theme.swift
 //  Nubi
 //
-//  Created by Jimena Rodriguez on 05/05/26.
-//
 
 import SwiftUI
 
-// MARK: - Paleta de colores oficial Nubi
+// MARK: - Paleta de colores
 extension Color {
-    static let nubiGlaucous   = Color(hex: "#5C7B99") // Azul principal
-    static let nubiLightBlue  = Color(hex: "#B8D8D8") // Azul claro
-    static let nubiParchment  = Color(hex: "#F4F1EA") // Fondo cálido
-    static let nubiAccent     = Color(hex: "#7FA8C9") // Intermedio
-    static let nubiSoft       = Color(hex: "#D6EAF8") // Muy suave
-    static let nubiDark       = Color(hex: "#2C4A6E") // Oscuro
+    // Coppel
+    static let coppelYellow      = Color(hex: "#F2EDED") // Islas / cards
+    static let coppelBackground  = Color(hex: "#F5FEFF") // Fondo
+    static let coppelButton      = Color(hex: "#234DB0") // Botones primarios
+    static let coppelDeepBlue    = Color(hex: "#191942") // Azul profundo (textos destacados)
+
+    // Nubi (mantenemos para acentos y emociones)
+    static let nubiGlaucous   = Color(hex: "#5C7B99")
+    static let nubiLightBlue  = Color(hex: "#B8D8D8")
+    static let nubiParchment  = coppelBackground // alias del fondo Coppel
+    static let nubiCardBg     = coppelYellow // alias amarillo de tarjetas
+    static let nubiAccent     = Color(hex: "#7FA8C9")
+    static let nubiSoft       = Color(hex: "#D6EAF8")
+    static let nubiDark       = Color(hex: "#191942") // ahora apunta al azul profundo Coppel
+    static let nubiPrimary    = Color(hex: "#234DB0") // botones
 }
 
 extension Color {
@@ -33,53 +40,57 @@ extension Color {
         default:
             (a, r, g, b) = (1, 1, 1, 0)
         }
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
-        )
+        self.init(.sRGB,
+                  red: Double(r) / 255,
+                  green: Double(g) / 255,
+                  blue: Double(b) / 255,
+                  opacity: Double(a) / 255)
     }
 }
 
-// MARK: - Fuentes y estilos
+// MARK: - Fuentes
 struct NubiFont {
-    static let title = Font.system(size: 28, weight: .bold, design: .rounded)
-    static let heading = Font.system(size: 22, weight: .semibold, design: .rounded)
-    static let subheading = Font.system(size: 17, weight: .medium, design: .rounded)
-    static let body = Font.system(size: 15, weight: .regular, design: .rounded)
-    static let caption = Font.system(size: 13, weight: .light, design: .rounded)
+    static let title       = Font.system(size: 28, weight: .bold,     design: .rounded)
+    static let heading     = Font.system(size: 22, weight: .semibold, design: .rounded)
+    static let subheading  = Font.system(size: 17, weight: .medium,   design: .rounded)
+    static let body        = Font.system(size: 15, weight: .regular,  design: .rounded)
+    static let caption     = Font.system(size: 13, weight: .light,    design: .rounded)
+    // Nuevas fuentes para guías más legibles
+    static let guideBody   = Font.system(size: 16, weight: .regular,  design: .rounded)
+    static let guideTitle  = Font.system(size: 17, weight: .semibold, design: .rounded)
 }
 
 // MARK: - Modificadores reutilizables
 struct NubiCard: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .background(Color.nubiParchment)
+            .background(Color.coppelYellow)
             .cornerRadius(20)
-            .shadow(color: Color.nubiGlaucous.opacity(0.15), radius: 10, x: 0, y: 4)
+            .shadow(color: Color.coppelDeepBlue.opacity(0.10), radius: 10, x: 0, y: 4)
     }
 }
 
 struct NubiButton: ViewModifier {
-    var color: Color = .nubiGlaucous
+    var color: Color = .coppelButton
     func body(content: Content) -> some View {
         content
             .foregroundColor(.white)
             .font(NubiFont.subheading)
             .padding(.horizontal, 28)
             .padding(.vertical, 14)
-            .background(
-                LinearGradient(colors: [color, color.opacity(0.75)],
-                               startPoint: .topLeading, endPoint: .bottomTrailing)
-            )
-            .cornerRadius(16)
+            .background(LinearGradient(colors: [color, color.opacity(0.8)],
+                                       startPoint: .topLeading, endPoint: .bottomTrailing))
+            .clipShape(Capsule())
             .shadow(color: color.opacity(0.4), radius: 8, x: 0, y: 4)
     }
 }
 
 extension View {
     func nubiCard() -> some View { modifier(NubiCard()) }
-    func nubiButton(color: Color = .nubiGlaucous) -> some View { modifier(NubiButton(color: color)) }
+    func nubiButton(color: Color = .coppelButton) -> some View { modifier(NubiButton(color: color)) }
+    
+    // Función global para desaparecer el teclado
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
 }

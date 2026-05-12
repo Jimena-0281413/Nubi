@@ -2,14 +2,6 @@
 //  ToolView.swift
 //  Nubi
 //
-//  Created by Max Lozano on 5/5/26.
-//
-
-
-//
-//  ToolView.swift
-//  Nubi
-//
 //  Vista guiada de herramienta: VStack con nombre, HStack con pasos,
 //  botón comenzar que activa temporizador.
 //

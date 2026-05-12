@@ -1,12 +1,4 @@
 //
-//  WellnessTool.swift
-//  Nubi
-//
-//  Created by Max Lozano on 5/5/26.
-//
-
-
-//
 //  ToolsModels.swift
 //  Nubi
 //

@@ -1,12 +1,4 @@
 //
-//  CertificationOverviewView.swift
-//  Nubi
-//
-//  Created by Max Lozano on 5/5/26.
-//
-
-
-//
 //  CertificationView.swift
 //  Nubi
 //

@@ -1,12 +1,4 @@
 //
-//  Certification.swift
-//  Nubi
-//
-//  Created by Max Lozano on 5/5/26.
-//
-
-
-//
 //  CertificationModels.swift
 //  Nubi
 //
